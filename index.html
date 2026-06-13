@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebWatch - Study Clock & Focus Timer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <h1>WebWatch</h1>
+                <span class="header-tag">Focus Timer</span>
+            </div>
+            <div class="header-controls">
+                <button class="icon-btn" id="themeToggle" title="Toggle theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
+                <button class="icon-btn" id="statsBtn" title="Statistics">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </button>
+                <button class="icon-btn" id="settingsBtn" title="Settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Column: Clock -->
+            <section class="clock-section">
+                <div class="analog-clock-wrapper">
+                    <svg class="analog-clock" viewBox="0 0 200 200">
+                        <defs>
+                            <linearGradient id="clockFaceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="var(--bg-tertiary)"/>
+                                <stop offset="100%" stop-color="var(--bg-secondary)"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="clock-face" cx="100" cy="100" r="95"/>
+                        <g class="clock-marks">
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(30 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(60 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(90 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(120 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(150 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(180 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(210 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(240 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(270 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(300 100 100)"/>
+                            <line x1="100" y1="12" x2="100" y2="22" class="hour-mark" transform="rotate(330 100 100)"/>
+                        </g>
+                        <g id="clockHands">
+                            <line class="hand hour-hand" id="hourHand" x1="100" y1="100" x2="100" y2="50"/>
+                            <line class="hand minute-hand" id="minuteHand" x1="100" y1="100" x2="100" y2="30"/>
+                            <line class="hand second-hand" id="secondHand" x1="100" y1="100" x2="100" y2="20"/>
+                        </g>
+                        <circle class="center-dot" cx="100" cy="100" r="6"/>
+                        <circle class="center-dot-inner" cx="100" cy="100" r="3"/>
+                    </svg>
+                </div>
+                <div class="digital-clock-wrapper">
+                    <div class="digital-clock" id="digitalClock">00:00:00</div>
+                    <div class="date-display" id="dateDisplay">Loading...</div>
+                    <div class="greeting" id="greeting">Good Morning</div>
+                </div>
+            </section>
+
+            <!-- Center Column: Timer -->
+            <section class="timer-section">
+                <div class="timer-mode-selector">
+                    <button class="mode-btn active" data-mode="work">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Focus
+                    </button>
+                    <button class="mode-btn" data-mode="break">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 1 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                        Break
+                    </button>
+                    <button class="mode-btn" data-mode="long-break">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+                        Long Break
+                    </button>
+                </div>
+
+                <div class="timer-display">
+                    <div class="timer-circle">
+                        <svg class="progress-ring" viewBox="0 0 200 200">
+                            <defs>
+                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="var(--primary-color)"/>
+                                    <stop offset="100%" stop-color="var(--secondary-color)"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-ring-bg" cx="100" cy="100" r="90"/>
+                            <circle class="progress-ring-circle" cx="100" cy="100" r="90"
+                                    stroke-dasharray="565.48" stroke-dashoffset="0" id="progressRing"/>
+                        </svg>
+                        <div class="timer-text">
+                            <span class="timer-minutes" id="timerMinutes">25</span>
+                            <span class="timer-separator">:</span>
+                            <span class="timer-seconds" id="timerSeconds">00</span>
+                        </div>
+                        <span class="timer-mode-label" id="timerModeLabel">Focus Time</span>
+                    </div>
+                </div>
+
+                <div class="timer-buttons">
+                    <button class="btn-control btn-reset" id="resetBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                        Reset
+                    </button>
+                    <button class="btn-control btn-primary btn-start" id="startBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        Start
+                    </button>
+                    <button class="btn-control btn-primary btn-pause" id="pauseBtn" style="display: none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                        Pause
+                    </button>
+                    <button class="btn-control btn-skip" id="skipBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                        Skip
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Column: Stats -->
+            <section class="stats-section">
+                <h2 class="section-title">Today's Progress</h2>
+                <div class="stat-card stat-card-large">
+                    <div class="stat-icon stat-icon-primary">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Today's Focus</span>
+                        <span class="stat-value" id="todayFocus">0h 0m</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-success">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Sessions</span>
+                        <span class="stat-value" id="sessionCount">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon stat-icon-warning">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Daily Goal</span>
+                        <span class="stat-value" id="dailyGoal">2h 0m</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Panel Overlay -->
+    <div class="panel-overlay" id="panelOverlay"></div>
+
+    <!-- Stats Panel -->
+    <aside class="panel stats-panel" id="statsPanel">
+        <div class="panel-header">
+            <h2>Statistics</h2>
+            <button class="close-btn" id="closeStats">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <span class="stats-label">Total Sessions</span>
+                    <span class="stats-value" id="totalSessions">0</span>
+                </div>
+                <div class="stats-card">
+                    <span class="stats-label">Focus Time</span>
+                    <span class="stats-value" id="totalFocusTime">0h 0m</span>
+                </div>
+                <div class="stats-card">
+                    <span class="stats-label">Break Time</span>
+                    <span class="stats-value" id="totalBreakTime">0h 0m</span>
+                </div>
+                <div class="stats-card">
+                    <span class="stats-label">Longest Session</span>
+                    <span class="stats-value" id="longestSession">0m</span>
+                </div>
+            </div>
+            <div class="goal-progress">
+                <div class="goal-header">
+                    <span class="goal-label">Daily Goal Progress</span>
+                    <span class="goal-percent" id="goalProgressText">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="goalProgress"></div>
+                </div>
+            </div>
+            <div class="week-chart-section">
+                <h3>This Week</h3>
+                <div class="week-chart" id="weekChart"></div>
+                <div class="week-days">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Settings Panel -->
+    <aside class="panel settings-panel" id="settingsPanel">
+        <div class="panel-header">
+            <h2>Settings</h2>
+            <button class="close-btn" id="closeSettings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="panel-content">
+            <div class="settings-section">
+                <h3>Timer Durations</h3>
+                <div class="setting-item">
+                    <label>Focus Duration</label>
+                    <div class="input-group">
+                        <input type="number" id="focusDuration" min="1" max="60" value="25" class="input-field">
+                        <span class="input-suffix">min</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label>Short Break</label>
+                    <div class="input-group">
+                        <input type="number" id="breakDuration" min="1" max="30" value="5" class="input-field">
+                        <span class="input-suffix">min</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label>Long Break</label>
+                    <div class="input-group">
+                        <input type="number" id="longBreakDuration" min="1" max="60" value="15" class="input-field">
+                        <span class="input-suffix">min</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label>Daily Goal</label>
+                    <div class="input-group">
+                        <input type="number" id="dailyGoalMinutes" min="10" max="600" value="120" class="input-field">
+                        <span class="input-suffix">min</span>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>Preferences</h3>
+                <div class="setting-toggle">
+                    <label>
+                        <span class="toggle-label">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                            Sound Notifications
+                        </span>
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span class="toggle-switch"></span>
+                    </label>
+                </div>
+                <div class="setting-toggle">
+                    <label>
+                        <span class="toggle-label">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            Auto-start Break
+                        </span>
+                        <input type="checkbox" id="autoToggle" checked>
+                        <span class="toggle-switch"></span>
+                    </label>
+                </div>
+                <div class="setting-toggle">
+                    <label>
+                        <span class="toggle-label">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Focus Mode
+                        </span>
+                        <input type="checkbox" id="focusModeToggle">
+                        <span class="toggle-switch"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button class="btn btn-primary" id="saveSettingsBtn">Save Changes</button>
+                <button class="btn btn-danger" id="resetStatsBtn">Reset Statistics</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Focus Mode Indicator -->
+    <div class="focus-indicator" id="focusModeIndicator" style="display: none;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Focus Mode Active
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
