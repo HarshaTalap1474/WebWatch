@@ -1,4 +1,4 @@
-# 🚀 WebWatch - Study Clock & Focus Timer
+# 🚀 FocusFlow - Study Clock & Focus Timer
 
 A modern, feature-rich web application designed to help you track focus time, manage study sessions with Pomodoro technique, and monitor your productivity with beautiful animations and intuitive controls.
 
@@ -211,4 +211,4 @@ Stay focused, be productive, and track your progress! 📚✨
 
 ---
 
-**Enjoy WebWatch and make your study sessions count!** 🎓
+**Enjoy FocusFlow and make your study sessions count!** 🎓

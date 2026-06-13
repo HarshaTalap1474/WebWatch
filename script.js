@@ -39,7 +39,7 @@ const startBtn = document.getElementById('startBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const resetBtn = document.getElementById('resetBtn');
 const skipBtn = document.getElementById('skipBtn');
-const themeToggle = document.getElementById('themeToggle');
+const themeSelect = document.getElementById('themeSelect');
 const settingsBtn = document.getElementById('settingsBtn');
 const statsBtn = document.getElementById('statsBtn');
 const statsPanel = document.getElementById('statsPanel');
@@ -90,12 +90,17 @@ function init() {
     // Fix SVG size on analog clock
     fixAnalogClockSize();
 
+    // Request Notification permission
+    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+        Notification.requestPermission();
+    }
+
     // Event listeners
     startBtn.addEventListener('click', startTimer);
     pauseBtn.addEventListener('click', pauseTimer);
     resetBtn.addEventListener('click', resetTimer);
     skipBtn.addEventListener('click', skipSession);
-    themeToggle.addEventListener('click', toggleTheme);
+    themeSelect.addEventListener('change', (e) => setTheme(e.target.value));
     settingsBtn.addEventListener('click', () => openPanel('settings'));
     statsBtn.addEventListener('click', () => openPanel('stats'));
 
@@ -138,10 +143,8 @@ function init() {
     document.addEventListener('keydown', handleKeyboard);
 
     // Load theme
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark-mode');
-        themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-    }
+    const savedTheme = localStorage.getItem('theme') || 'dracula';
+    setTheme(savedTheme);
 
     // Restore settings UI
     updateSettingsUI();
@@ -306,10 +309,12 @@ function completeSession() {
         state.stats.longestSession = Math.max(state.stats.longestSession, sessionTime);
         playNotificationSound();
         showToast('🎉 Focus session completed! Time for a break.');
+        sendBrowserNotification('Focus session completed!', 'Time for a break. Great job!');
     } else {
         state.stats.totalBreakTime += sessionTime;
         playNotificationSound();
         showToast('☕ Break time over! Ready to focus?');
+        sendBrowserNotification('Break time over!', 'Ready to get back into focus?');
     }
 
     state.stats.sessionsCompleted++;
@@ -460,6 +465,7 @@ function saveSettings() {
     saveState();
     updateStats();
     resetTimer();
+    closePanel(document.getElementById('settingsPanel'));
     showToast('✅ Settings saved successfully!');
 }
 
@@ -504,16 +510,13 @@ function applyFocusMode() {
 // THEME FUNCTIONS
 // ===================
 
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    const isDark = document.body.classList.contains('dark-mode');
-    if (isDark) {
-        themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-    } else {
-        themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+function setTheme(themeName) {
+    document.body.dataset.theme = themeName;
+    localStorage.setItem('theme', themeName);
+    
+    if (themeSelect) {
+        themeSelect.value = themeName;
     }
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    showToast(isDark ? 'Dark mode enabled' : 'Light mode enabled');
 }
 
 // ===================
@@ -545,6 +548,15 @@ function showToast(message) {
     setTimeout(() => {
         toast.classList.remove('show');
     }, 2000);
+}
+
+function sendBrowserNotification(title, body) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(title, {
+            body: body,
+            icon: '/favicon.svg'
+        });
+    }
 }
 
 function playNotificationSound() {
@@ -583,11 +595,11 @@ function handleKeyboard(e) {
 // ===================
 
 function saveState() {
-    localStorage.setItem('webwatchState', JSON.stringify(state));
+    localStorage.setItem('focusflowState', JSON.stringify(state));
 }
 
 function loadState() {
-    const saved = localStorage.getItem('webwatchState');
+    const saved = localStorage.getItem('focusflowState');
     if (saved) {
         const loaded = JSON.parse(saved);
 

@@ -3,26 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebWatch - Study Clock & Focus Timer</title>
+    <meta name="description" content="FocusFlow is a modern, beautifully designed study clock and Pomodoro focus timer to help you maximize your productivity and manage your time effectively.">
+    <meta name="keywords" content="Pomodoro, Timer, Focus, Study Clock, Productivity, Time Management, FocusFlow">
+    <meta name="author" content="HarshaTalap1474">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://focusflow.harshalabs.online/">
+    <meta property="og:title" content="FocusFlow - Study Clock & Focus Timer">
+    <meta property="og:description" content="A modern, beautifully designed study clock and Pomodoro focus timer to help you maximize your productivity.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://focusflow.harshalabs.online/">
+    <meta property="twitter:title" content="FocusFlow - Study Clock & Focus Timer">
+    <meta property="twitter:description" content="A modern, beautifully designed study clock and Pomodoro focus timer to help you maximize your productivity.">
+    
+    <title>FocusFlow - Study Clock & Focus Timer</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div class="bg-gradient"></div>
+<body data-theme="dracula">
+    <div class="bg-gradient">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
 
     <div class="app-container">
         <!-- Header -->
         <header class="header">
             <div class="header-brand">
-                <h1>WebWatch</h1>
+                <h1>FocusFlow</h1>
                 <span class="header-tag">Focus Timer</span>
             </div>
             <div class="header-controls">
-                <button class="icon-btn" id="themeToggle" title="Toggle theme">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                </button>
+
                 <button class="icon-btn" id="statsBtn" title="Statistics">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                 </button>
@@ -166,6 +185,22 @@
                 </div>
             </section>
         </main>
+        
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Made with ❤️ by HarshaTalap1474</p>
+            <div class="social-links">
+                <a href="https://github.com/HarshaTalap1474" target="_blank" rel="noopener noreferrer" title="GitHub">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </a>
+                <a href="https://linkedin.com/in/HarshaTalap1474" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                </a>
+                <a href="https://harshalabs.online" target="_blank" rel="noopener noreferrer" title="Portfolio">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </a>
+            </div>
+        </footer>
     </div>
 
     <!-- Panel Overlay -->
@@ -259,6 +294,15 @@
             </div>
             <div class="settings-section">
                 <h3>Preferences</h3>
+                <div class="setting-item">
+                    <label>App Theme</label>
+                    <select id="themeSelect" class="input-field select-field">
+                        <option value="dracula">Dracula (Dark)</option>
+                        <option value="light">Minimal (Light)</option>
+                        <option value="ocean">Ocean Breeze</option>
+                        <option value="neon">Cyberpunk Neon</option>
+                    </select>
+                </div>
                 <div class="setting-toggle">
                     <label>
                         <span class="toggle-label">
@@ -306,6 +350,6 @@
         Focus Mode Active
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
