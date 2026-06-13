@@ -21,7 +21,7 @@ if (!fs.existsSync(distPath)) {
 app.use(express.static(distPath));
 
 // Handle any client-side routing (fallback to index.html)
-app.get('*', (req, res) => {
+app.use((req, res) => {
     res.sendFile(join(distPath, 'index.html'));
 });
 
