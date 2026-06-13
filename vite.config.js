@@ -8,5 +8,14 @@ export default defineConfig({
     minify: 'esbuild',
     cssMinify: true,
     sourcemap: false
+  },
+  server: {
+    host: true, // Listen on all IPs
+    open: false // explicitly prevent opening browser
+  },
+  preview: {
+    host: true, // Listen on all IPs
+    open: false,
+    port: 8080
   }
 });
