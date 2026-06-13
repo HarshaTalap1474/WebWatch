@@ -324,10 +324,28 @@ function completeSession() {
         date: new Date().toISOString()
     });
 
-    // Auto-start next session
-    if (state.autoStartBreak && state.currentMode === 'work') {
-        changeMode({ target: { dataset: { mode: 'break' } } });
-        startTimer();
+    // Auto-cycle to next session
+    if (state.autoStartBreak) {
+        if (state.currentMode === 'work') {
+            // Every 4th work session triggers a long break
+            const workSessions = state.stats.sessionHistory.filter(s => s.type === 'work' && new Date(s.date).toDateString() === new Date().toDateString()).length;
+            if (workSessions % 4 === 0) {
+                changeMode({ target: { dataset: { mode: 'long-break' } } });
+            } else {
+                changeMode({ target: { dataset: { mode: 'break' } } });
+            }
+            startTimer();
+        } else {
+            // Coming back from a break: check if daily goal is reached
+            if (state.stats.totalFocusTime < state.dailyGoalMinutes) {
+                changeMode({ target: { dataset: { mode: 'work' } } });
+                startTimer();
+            } else {
+                showToast('🎉 Daily Goal Reached! Auto-cycle stopped.');
+                sendBrowserNotification('Daily Goal Reached!', 'You have completed your focus goal for the day!');
+                resetTimer();
+            }
+        }
     } else {
         resetTimer();
     }
