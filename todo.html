@@ -2,111 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List - FocusFlow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Focus Tasks - FocusFlow</title>
+    
+    <!-- Meta tags for PWA / Mobile -->
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .todo-page-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
-        .todo-panel {
-            width: 100%;
-            max-width: 600px;
-            background: var(--panel-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--panel-border);
-            border-radius: var(--radius-lg);
-            padding: 30px;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .todo-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
-            margin-bottom: 10px;
-        }
-
-        .todo-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .back-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            color: var(--text-color);
-            font-weight: 500;
-            transition: all var(--transition-speed);
-        }
-
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .todo-input-wrapper {
-            display: flex;
-            gap: 12px;
-        }
-
-        .todo-input-wrapper .input-field {
-            flex: 1;
-            margin-bottom: 0;
-            font-size: 16px;
-            padding: 14px;
-        }
-
-        .todo-input-wrapper .btn-primary {
-            padding: 0 24px;
-            border-radius: var(--radius);
-            font-weight: 600;
-        }
-
-        .todo-list-container {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 60vh;
-            overflow-y: auto;
-            padding-right: 8px;
-        }
-
-        .todo-list-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        .todo-list-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .todo-list-container::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 6px;
-        }
-    </style>
 </head>
 <body class="theme-dracula">
     <div class="bg-gradient">
@@ -115,36 +25,61 @@
         <div class="orb orb-3"></div>
     </div>
 
-    <div class="todo-page-container">
-        <div class="todo-panel">
-            <div class="todo-header">
-                <h1 class="todo-title">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                    My Tasks
-                </h1>
-                <a href="index.html" class="back-btn">
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <h1>FocusFlow</h1>
+                <span class="header-tag">Tasks</span>
+            </div>
+            <div class="header-controls">
+                <a href="index.html" class="icon-btn" title="Back to Timer" style="text-decoration: none; display: flex; align-items: center; gap: 8px; width: auto; padding: 0 16px; border-radius: var(--radius-full);">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                    Back
+                    <span style="font-size: 14px; font-weight: 500;">Back to Timer</span>
                 </a>
             </div>
+        </header>
 
-            <div class="todo-input-wrapper">
-                <input type="text" id="taskInput" class="input-field" placeholder="What needs to be done?">
-                <button class="btn btn-primary" id="addTaskBtn">Add Task</button>
+        <!-- Main Content -->
+        <main class="main-content" style="justify-content: center; align-items: center;">
+            <div class="tasks-widget panel" style="width: 100%; max-width: 600px; margin: 0 auto;">
+                <h3 class="tasks-title" style="margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    My Focus Tasks
+                </h3>
+                
+                <div class="task-input-group">
+                    <input type="text" id="taskInput" class="input-field" placeholder="What are you working on?">
+                    <button class="btn btn-primary" id="addTaskBtn" style="width: auto; padding: 0 20px;">
+                        Add Task
+                    </button>
+                </div>
+                
+                <ul class="task-list" id="taskList" style="max-height: 55vh; padding-right: 10px;">
+                    <!-- Tasks will be injected here by JS -->
+                </ul>
             </div>
-
-            <ul class="todo-list-container task-list" id="taskList">
-                <!-- Tasks injected here -->
-            </ul>
-        </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Made with ❤️ by HarshaTalap1474</p>
+            <div class="social-links">
+                <a href="https://github.com/HarshaTalap1474" target="_blank" rel="noopener noreferrer" title="GitHub">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                </a>
+                <a href="https://harshalabs.online" target="_blank" rel="noopener noreferrer" title="Portfolio">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </a>
+            </div>
+        </footer>
     </div>
 
-    <!-- Theming script to ensure consistency with main app -->
+    <!-- Theming script -->
     <script>
         const savedTheme = localStorage.getItem('theme') || 'dracula';
         document.body.className = `theme-${savedTheme}`;
     </script>
-    
     <script type="module" src="todo.js"></script>
 </body>
 </html>
