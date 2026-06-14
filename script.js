@@ -25,7 +25,10 @@ const state = {
         longestSession: 0,
         sessionHistory: [],
         lastReset: new Date().toDateString()
-    }
+    },
+    
+    // Tasks
+    tasks: []
 };
 
 // DOM Elements
@@ -72,10 +75,16 @@ const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 const resetSettingsBtn = document.getElementById('resetSettingsBtn');
 const resetStatsBtn = document.getElementById('resetStatsBtn');
 
+// Task Elements
+const taskInput = document.getElementById('taskInput');
+const addTaskBtn = document.getElementById('addTaskBtn');
+const taskList = document.getElementById('taskList');
+
 // Load saved state
 loadState();
 updateTimerDisplay();
 updateStats();
+renderTasks();
 
 // ===================
 // INITIALIZATION
@@ -143,6 +152,12 @@ function init() {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboard);
+
+    // Tasks
+    addTaskBtn.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTask();
+    });
 
     // Load theme
     const savedTheme = localStorage.getItem('theme') || 'dracula';
@@ -277,6 +292,68 @@ function skipSession() {
     state.timeLeft = 0;
     completeSession();
     showToast('Session skipped');
+}
+
+// ===================
+// TASK MANAGEMENT
+// ===================
+
+function renderTasks() {
+    taskList.innerHTML = '';
+    
+    if (!state.tasks || state.tasks.length === 0) {
+        taskList.innerHTML = '<li style="text-align:center; color:var(--text-muted); padding: 10px; font-size: 14px;">No tasks yet. Add one above!</li>';
+        return;
+    }
+
+    state.tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = `task-item ${task.completed ? 'completed' : ''}`;
+        
+        li.innerHTML = `
+            <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask('${task.id}')">
+            <span class="task-text">${task.text}</span>
+            <button class="btn-delete-task" onclick="deleteTask('${task.id}')" title="Delete Task">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+        `;
+        
+        taskList.appendChild(li);
+    });
+}
+
+// Assign to window because script is type="module"
+window.toggleTask = function(id) {
+    const task = state.tasks.find(t => t.id === id);
+    if (task) {
+        task.completed = !task.completed;
+        saveState();
+        renderTasks();
+    }
+};
+
+window.deleteTask = function(id) {
+    state.tasks = state.tasks.filter(t => t.id !== id);
+    saveState();
+    renderTasks();
+};
+
+function addTask() {
+    const text = taskInput.value.trim();
+    if (!text) return;
+    
+    const newTask = {
+        id: 'task_' + Date.now().toString(36),
+        text: text,
+        completed: false
+    };
+    
+    if (!state.tasks) state.tasks = [];
+    state.tasks.push(newTask);
+    saveState();
+    
+    taskInput.value = '';
+    renderTasks();
 }
 
 function updateTimerDisplay() {
@@ -653,6 +730,7 @@ function loadState() {
         }
 
         Object.assign(state, loaded);
+        if (!state.tasks) state.tasks = []; // Ensure tasks exist for old states
     }
 }
 
