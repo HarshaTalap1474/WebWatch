@@ -13,6 +13,7 @@ function loadTasks() {
 }
 
 function saveTasks() {
+    localStorage.removeItem('focusflowTasks');
     localStorage.setItem('focusflowTasks', JSON.stringify(tasks));
 }
 

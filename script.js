@@ -635,6 +635,8 @@ function handleKeyboard(e) {
 // ===================
 
 function saveState() {
+    // Make sure old cached saving is deleted before new savings, as requested
+    localStorage.removeItem('focusflowState');
     localStorage.setItem('focusflowState', JSON.stringify(state));
 }
 
@@ -665,6 +667,29 @@ function loadState() {
 // ===================
 
 init();
+
+// ===================
+// LIFECYCLE HOOKS
+// ===================
+
+// Handle tab closing or reloading
+window.addEventListener('beforeunload', (e) => {
+    // If the timer is actively running, show the confirmation dialog
+    if (state.isRunning) {
+        e.preventDefault();
+        e.returnValue = ''; // Required for Chrome to show the prompt
+    }
+    
+    // Always save the exact current stopwatch time and stats before closing
+    saveState();
+});
+
+// Use visibilitychange as a fallback for mobile devices
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+        saveState();
+    }
+});
 
 // Update stats every minute
 setInterval(() => {
