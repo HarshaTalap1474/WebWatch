@@ -69,6 +69,7 @@ const dailyGoalMinutesInput = document.getElementById('dailyGoalMinutes');
 const soundToggle = document.getElementById('soundToggle');
 const autoToggle = document.getElementById('autoToggle');
 const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+const resetSettingsBtn = document.getElementById('resetSettingsBtn');
 const resetStatsBtn = document.getElementById('resetStatsBtn');
 
 // Load saved state
@@ -132,6 +133,7 @@ function init() {
 
     // Settings
     saveSettingsBtn.addEventListener('click', saveSettings);
+    resetSettingsBtn.addEventListener('click', resetToDefaultSettings);
     resetStatsBtn.addEventListener('click', confirmResetStats);
     focusModeToggle.addEventListener('change', () => {
         state.focusMode = focusModeToggle.checked;
@@ -495,6 +497,23 @@ function updateSettingsUI() {
     soundToggle.checked = state.soundEnabled;
     autoToggle.checked = state.autoStartBreak;
     focusModeToggle.checked = state.focusMode;
+}
+
+function resetToDefaultSettings() {
+    if (confirm('Are you sure you want to reset all settings to their default values?')) {
+        state.focusDuration = 25;
+        state.breakDuration = 5;
+        state.longBreakDuration = 15;
+        state.dailyGoalMinutes = 120;
+        state.soundEnabled = true;
+        state.autoStartBreak = true;
+        state.focusMode = false;
+        
+        updateSettingsUI();
+        saveState();
+        resetTimer();
+        showToast('⚙️ Settings reset to default!');
+    }
 }
 
 function confirmResetStats() {
