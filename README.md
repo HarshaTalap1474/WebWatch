@@ -189,13 +189,79 @@ Works on:
 - Responsive grid layouts
 - Smooth transitions between states
 
-## 📖 **Getting Started**
+## 📖 **Getting Started (Local Development)**
 
-1. Download or clone the project
-2. Open `index.html` in a web browser
-3. Grant any permission prompts (for audio)
-4. Start your first focus session!
-5. Customize settings in ⚙️ panel as needed
+1. Clone the project: `git clone https://github.com/HarshaTalap1474/FocusFlow.git`
+2. Open the directory: `cd FocusFlow`
+3. Install dependencies: `npm install`
+4. Start the development server: `npm run dev`
+5. Open `http://localhost:5173` in your web browser.
+
+---
+
+## 🚀 **Production Server Setup & Hosting Guide**
+
+If you want to host FocusFlow permanently on an Ubuntu server (like a VPS), follow this comprehensive guide to get it running with **PM2** so it stays online 24/7.
+
+### 1. Initial Setup
+Install the necessary tools on your server:
+```bash
+sudo apt update
+sudo apt install -y nodejs npm
+sudo npm install -g pm2
+```
+*Note: If you accidentally installed the system package `vite` via `apt` in the past, remove it, as it is a completely unrelated C++ graphical app that will cause Qt display errors: `sudo apt remove -y vite`*
+
+### 2. Clone and Build
+Download the project and build the highly-optimized production files:
+```bash
+git clone https://github.com/HarshaTalap1474/FocusFlow.git
+cd FocusFlow
+npm install
+npm run build
+```
+
+### 3. Start the Server
+FocusFlow includes a custom `server.js` Express script for easy hosting:
+```bash
+# Start the server in the background and name it "FocusFlow"
+pm2 start server.js --name "FocusFlow"
+
+# Save the PM2 configuration so it remembers the app
+pm2 save
+
+# (Optional) Generate a script to restart PM2 automatically on server reboot
+pm2 startup
+```
+Your app is now live at `http://<YOUR-SERVER-IP>:8080`!
+
+### 4. Updating & Debugging
+
+**How to pull new updates from GitHub:**
+```bash
+git pull origin main
+npm run build
+pm2 restart FocusFlow
+```
+
+**What if `git pull` fails?**
+If `git pull` throws an error about local changes being overwritten, force the server to sync exactly with GitHub:
+```bash
+git fetch --all
+git reset --hard origin/main
+npm run build
+pm2 restart FocusFlow
+```
+
+**How to view live server logs:**
+```bash
+pm2 logs FocusFlow
+```
+
+**How to clear old, confusing error logs:**
+```bash
+pm2 flush
+```
 
 ## 🎯 **Pro Tips**
 
