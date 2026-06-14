@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List - FocusFlow</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .maintenance-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: var(--text-color);
+            text-align: center;
+            padding: 2rem;
+        }
+        .maintenance-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .back-btn {
+            margin-top: 2rem;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body class="theme-dracula">
+    <div class="bg-gradient">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="maintenance-container">
+        <div class="maintenance-icon">🚧</div>
+        <h1>Under Maintenance</h1>
+        <p>The dedicated Todo List page is currently being built. Check back soon!</p>
+        
+        <a href="index.html" class="btn btn-primary back-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Timer
+        </a>
+    </div>
+</body>
+</html>

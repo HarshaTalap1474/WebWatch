@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   // Setting base to relative path makes it easier to deploy to GitHub Pages without extra config
@@ -7,7 +8,13 @@ export default defineConfig({
     outDir: 'dist',
     minify: 'esbuild',
     cssMinify: true,
-    sourcemap: false
+    sourcemap: false,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        todo: resolve(__dirname, 'todo.html')
+      }
+    }
   },
   server: {
     host: true, // Listen on all IPs
