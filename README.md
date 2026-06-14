@@ -191,7 +191,7 @@ Works on:
 
 ## 📖 **Getting Started (Local Development)**
 
-1. Clone the project: `git clone https://github.com/HarshaTalap1474/FocusFlow.git`
+1. Clone the project: `git clone https://github.com/HarshaTalap1474/WebWatch.git FocusFlow`
 2. Open the directory: `cd FocusFlow`
 3. Install dependencies: `npm install`
 4. Start the development server: `npm run dev`
@@ -215,7 +215,7 @@ sudo npm install -g pm2
 ### 2. Clone and Build
 Download the project and build the highly-optimized production files:
 ```bash
-git clone https://github.com/HarshaTalap1474/FocusFlow.git
+git clone https://github.com/HarshaTalap1474/WebWatch.git FocusFlow
 cd FocusFlow
 npm install
 npm run build
