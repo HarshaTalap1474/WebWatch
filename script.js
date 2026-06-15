@@ -94,10 +94,7 @@ function init() {
     // Fix SVG size on analog clock
     fixAnalogClockSize();
 
-    // Request Notification permission
-    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
-        Notification.requestPermission();
-    }
+
 
     // Event listeners
     startBtn.addEventListener('click', startTimer);
@@ -218,6 +215,11 @@ function fixAnalogClockSize() {
 function startTimer() {
     if (state.isRunning) return;
 
+    // Request Notification permission on explicit user interaction
+    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+        Notification.requestPermission();
+    }
+
     state.isRunning = true;
     state.isPaused = false;
     state.sessionStartTime = Date.now() - (state.sessionPausedTime * 1000);
@@ -285,9 +287,17 @@ function skipSession() {
 function updateTimerDisplay() {
     const minutes = Math.floor(state.timeLeft / 60);
     const seconds = state.timeLeft % 60;
+    
+    const minStr = String(minutes).padStart(2, '0');
+    const secStr = String(seconds).padStart(2, '0');
 
-    timerMinutes.textContent = String(minutes).padStart(2, '0');
-    timerSeconds.textContent = String(seconds).padStart(2, '0');
+    timerMinutes.textContent = minStr;
+    timerSeconds.textContent = secStr;
+    
+    // Dynamic Page Title
+    const modeName = state.currentMode === 'work' ? 'Pomodoro' :
+                     state.currentMode === 'break' ? 'Short Break' : 'Long Break';
+    document.title = `(${minStr}:${secStr}) ${modeName} - FocusFlow`;
 
     // Update progress ring
     const initialDuration = state.currentMode === 'work'
@@ -594,7 +604,9 @@ function sendBrowserNotification(title, body) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(title, {
             body: body,
-            icon: '/favicon.svg'
+            icon: '/favicon.svg?v=2',
+            requireInteraction: true,
+            vibrate: [200, 100, 200]
         });
     }
 }
