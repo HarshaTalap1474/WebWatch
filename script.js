@@ -310,13 +310,15 @@ function updateTimerDisplay() {
         const modeLabel = state.currentMode === 'work' ? 'Focus Time' :
                           state.currentMode === 'break' ? 'Short Break' : 'Long Break';
         
-        const pipTime = pipWindow.document.getElementById('pipTime');
-        const pipMode = pipWindow.document.getElementById('pipMode');
+        const pipMinutes = pipWindow.document.getElementById('pipTimerMinutes');
+        const pipSeconds = pipWindow.document.getElementById('pipTimerSeconds');
+        const pipModeLabel = pipWindow.document.getElementById('pipTimerModeLabel');
         const pipIconPlay = pipWindow.document.getElementById('pipIconPlay');
         const pipIconPause = pipWindow.document.getElementById('pipIconPause');
         
-        if (pipTime) pipTime.textContent = `${minStr}:${secStr}`;
-        if (pipMode) pipMode.textContent = modeLabel;
+        if (pipMinutes) pipMinutes.textContent = minStr;
+        if (pipSeconds) pipSeconds.textContent = secStr;
+        if (pipModeLabel) pipModeLabel.textContent = modeLabel;
         
         if (pipIconPlay && pipIconPause) {
             if (state.isRunning) {
@@ -688,14 +690,18 @@ async function togglePiP() {
                 justify-content: center;
             }
             .pip-wrapper {
-                transform: scale(0.7);
+                transform: scale(0.6);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 margin-top: -30px;
             }
             .timer-controls {
-                margin-top: 20px;
+                margin-top: 30px;
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                align-items: center;
             }
         `;
         popup.document.head.appendChild(style);
@@ -703,16 +709,25 @@ async function togglePiP() {
         const container = popup.document.createElement('div');
         container.className = 'pip-wrapper';
         container.innerHTML = `
-            <div class="timer-container" style="box-shadow: none;">
-                <svg class="progress-ring" width="360" height="360" style="position: absolute; top: -10px; left: -10px;">
-                    <circle class="progress-ring__circle progress-ring__background" cx="180" cy="180" r="175" />
-                    <circle id="pipProgressRing" class="progress-ring__circle progress-ring__progress" cx="180" cy="180" r="175" />
-                </svg>
-                <div class="timer-display">
-                    <div class="timer-circle">
-                        <span class="time-main" id="pipTime">00:00</span>
-                        <span class="time-label" id="pipMode">FOCUS TIME</span>
+            <div class="timer-display">
+                <div class="timer-circle">
+                    <svg class="progress-ring" viewBox="0 0 200 200">
+                        <defs>
+                            <linearGradient id="pipProgressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="var(--primary-color)"/>
+                                <stop offset="100%" stop-color="var(--secondary-color)"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="progress-ring-bg" cx="100" cy="100" r="90"/>
+                        <circle class="progress-ring-circle" cx="100" cy="100" r="90"
+                                stroke-dasharray="565.48" stroke-dashoffset="0" id="pipProgressRing" style="stroke: url(#pipProgressGradient);"/>
+                    </svg>
+                    <div class="timer-text">
+                        <span class="timer-minutes" id="pipTimerMinutes">00</span>
+                        <span class="timer-separator">:</span>
+                        <span class="timer-seconds" id="pipTimerSeconds">00</span>
                     </div>
+                    <span class="timer-mode-label" id="pipTimerModeLabel">Focus Time</span>
                 </div>
             </div>
             <div class="timer-controls">
