@@ -695,7 +695,7 @@ async function togglePiP() {
         popup.document.head.appendChild(style);
 
         const container = popup.document.createElement('div');
-        container.innerHTML = \`
+        container.innerHTML = `
             <div class="time" id="pipTime">00:00</div>
             <div class="mode" id="pipMode">Focus</div>
             <div class="controls">
@@ -707,7 +707,7 @@ async function togglePiP() {
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
                 </button>
             </div>
-        \`;
+        `;
         popup.document.body.appendChild(container);
 
         popup.document.getElementById('pipPlayPause').addEventListener('click', () => {
