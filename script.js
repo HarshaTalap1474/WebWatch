@@ -315,6 +315,7 @@ function updateTimerDisplay() {
         const pipModeLabel = pipWindow.document.getElementById('pipTimerModeLabel');
         const pipIconPlay = pipWindow.document.getElementById('pipIconPlay');
         const pipIconPause = pipWindow.document.getElementById('pipIconPause');
+        const pipPlayPauseText = pipWindow.document.getElementById('pipPlayPauseText');
         
         if (pipMinutes) pipMinutes.textContent = minStr;
         if (pipSeconds) pipSeconds.textContent = secStr;
@@ -324,9 +325,11 @@ function updateTimerDisplay() {
             if (state.isRunning) {
                 pipIconPlay.style.display = 'none';
                 pipIconPause.style.display = 'block';
+                if (pipPlayPauseText) pipPlayPauseText.textContent = 'Pause';
             } else {
                 pipIconPlay.style.display = 'block';
                 pipIconPause.style.display = 'none';
+                if (pipPlayPauseText) pipPlayPauseText.textContent = 'Start';
             }
         }
     }
@@ -690,18 +693,15 @@ async function togglePiP() {
                 justify-content: center;
             }
             .pip-wrapper {
-                transform: scale(0.6);
+                transform: scale(0.85);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                margin-top: -30px;
+                margin-top: -10px;
             }
-            .timer-controls {
-                margin-top: 30px;
-                display: flex;
-                gap: 15px;
-                justify-content: center;
-                align-items: center;
+            .timer-buttons {
+                margin-top: 20px;
+                transform: scale(0.9);
             }
         `;
         popup.document.head.appendChild(style);
@@ -730,16 +730,19 @@ async function togglePiP() {
                     <span class="timer-mode-label" id="pipTimerModeLabel">Focus Time</span>
                 </div>
             </div>
-            <div class="timer-controls">
+            <div class="timer-buttons">
                 <button class="btn-control btn-reset" id="pipReset" title="Reset">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    Reset
                 </button>
                 <button class="btn-control btn-primary" id="pipPlayPause" title="Play/Pause">
-                    <svg id="pipIconPlay" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    <svg id="pipIconPause" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    <svg id="pipIconPlay" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <svg id="pipIconPause" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    <span id="pipPlayPauseText">Start</span>
                 </button>
                 <button class="btn-control btn-skip" id="pipSkip" title="Skip">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                    Skip
                 </button>
             </div>
         `;
