@@ -313,25 +313,9 @@ function updateTimerDisplay() {
         const pipMinutes = pipWindow.document.getElementById('pipTimerMinutes');
         const pipSeconds = pipWindow.document.getElementById('pipTimerSeconds');
         const pipModeLabel = pipWindow.document.getElementById('pipTimerModeLabel');
-        const pipIconPlay = pipWindow.document.getElementById('pipIconPlay');
-        const pipIconPause = pipWindow.document.getElementById('pipIconPause');
-        const pipPlayPauseText = pipWindow.document.getElementById('pipPlayPauseText');
-        
         if (pipMinutes) pipMinutes.textContent = minStr;
         if (pipSeconds) pipSeconds.textContent = secStr;
         if (pipModeLabel) pipModeLabel.textContent = modeLabel;
-        
-        if (pipIconPlay && pipIconPause) {
-            if (state.isRunning) {
-                pipIconPlay.style.display = 'none';
-                pipIconPause.style.display = 'block';
-                if (pipPlayPauseText) pipPlayPauseText.textContent = 'Pause';
-            } else {
-                pipIconPlay.style.display = 'block';
-                pipIconPause.style.display = 'none';
-                if (pipPlayPauseText) pipPlayPauseText.textContent = 'Start';
-            }
-        }
     }
 
     // Update progress ring
@@ -345,14 +329,6 @@ function updateTimerDisplay() {
     const circumference = 565.48;
     const strokeDashoffset = circumference * (1 - progress);
     progressRing.style.strokeDashoffset = strokeDashoffset;
-
-    // Update PiP progress ring if open
-    if (pipWindow) {
-        const pipProgressRing = pipWindow.document.getElementById('pipProgressRing');
-        if (pipProgressRing) {
-            pipProgressRing.style.strokeDashoffset = strokeDashoffset;
-        }
-    }
 }
 
 function completeSession() {
@@ -697,15 +673,12 @@ async function togglePiP() {
                 justify-content: center;
             }
             .pip-wrapper {
-                transform: scale(calc(min(100vw / 340, 100vh / 400)));
+                transform: scale(calc(min(100vw / 280, 100vh / 150)));
                 transform-origin: center;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-            }
-            .timer-buttons {
-                margin-top: 30px;
             }
         `;
         popup.document.head.appendChild(style);
@@ -713,60 +686,16 @@ async function togglePiP() {
         const container = popup.document.createElement('div');
         container.className = 'pip-wrapper';
         container.innerHTML = `
-            <div class="timer-display">
-                <div class="timer-circle">
-                    <svg class="progress-ring" viewBox="0 0 200 200">
-                        <defs>
-                            <linearGradient id="pipProgressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="var(--primary-color)"/>
-                                <stop offset="100%" stop-color="var(--secondary-color)"/>
-                            </linearGradient>
-                        </defs>
-                        <circle class="progress-ring-bg" cx="100" cy="100" r="90"/>
-                        <circle class="progress-ring-circle" cx="100" cy="100" r="90"
-                                stroke-dasharray="565.48" stroke-dashoffset="0" id="pipProgressRing" style="stroke: url(#pipProgressGradient);"/>
-                    </svg>
-                    <div class="timer-text">
-                        <span class="timer-minutes" id="pipTimerMinutes">00</span>
-                        <span class="timer-separator">:</span>
-                        <span class="timer-seconds" id="pipTimerSeconds">00</span>
-                    </div>
-                    <span class="timer-mode-label" id="pipTimerModeLabel">Focus Time</span>
+            <div class="timer-display" style="width: auto; height: auto;">
+                <div class="timer-text" style="position: relative;">
+                    <span class="timer-minutes" id="pipTimerMinutes">00</span>
+                    <span class="timer-separator">:</span>
+                    <span class="timer-seconds" id="pipTimerSeconds">00</span>
                 </div>
-            </div>
-            <div class="timer-buttons">
-                <button class="btn-control btn-reset" id="pipReset" title="Reset">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                    Reset
-                </button>
-                <button class="btn-control btn-primary" id="pipPlayPause" title="Play/Pause">
-                    <svg id="pipIconPlay" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    <svg id="pipIconPause" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
-                    <span id="pipPlayPauseText">Start</span>
-                </button>
-                <button class="btn-control btn-skip" id="pipSkip" title="Skip">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-                    Skip
-                </button>
+                <div class="timer-mode-label" id="pipTimerModeLabel" style="position: relative; text-align: center; margin-top: 10px; bottom: 0; transform: none; left: 0;">Focus Time</div>
             </div>
         `;
         popup.document.body.appendChild(container);
-
-        popup.document.getElementById('pipPlayPause').addEventListener('click', () => {
-            if (state.isRunning) pauseTimer();
-            else startTimer();
-            updateTimerDisplay();
-        });
-
-        popup.document.getElementById('pipReset').addEventListener('click', () => {
-            resetTimer();
-            updateTimerDisplay();
-        });
-
-        popup.document.getElementById('pipSkip').addEventListener('click', () => {
-            skipSession();
-            updateTimerDisplay();
-        });
 
         // Set pipWindow only after it's ready
         pipWindow = popup;
