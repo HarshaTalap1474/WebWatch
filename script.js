@@ -607,7 +607,7 @@ function sendBrowserNotification(title, body) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(title, {
             body: body,
-            icon: '/app-icon.svg',
+            icon: '/clock-check.svg',
             requireInteraction: true,
             vibrate: [200, 100, 200]
         });
@@ -624,15 +624,16 @@ function playNotificationSound() {
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    // Play a pleasant notification sound
+    // Play a pleasant 3-second notification sound
     oscillator.frequency.value = 800;
     oscillator.type = 'sine';
 
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    // Slow fade out over 3 seconds
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3.0);
 
     oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.5);
+    oscillator.stop(audioContext.currentTime + 3.0);
 }
 
 function handleKeyboard(e) {
