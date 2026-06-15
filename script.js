@@ -295,9 +295,12 @@ function updateTimerDisplay() {
     timerSeconds.textContent = secStr;
     
     // Dynamic Page Title
-    const modeName = state.currentMode === 'work' ? 'Pomodoro' :
-                     state.currentMode === 'break' ? 'Short Break' : 'Long Break';
-    document.title = `(${minStr}:${secStr}) ${modeName} - FocusFlow`;
+    if (state.isRunning) {
+        const modeName = state.currentMode === 'work' ? 'FocusFlow' : 'Break';
+        document.title = `${minStr}:${secStr} - ${modeName}`;
+    } else {
+        document.title = 'FocusFlow - Study Clock & Focus Timer';
+    }
 
     // Update progress ring
     const initialDuration = state.currentMode === 'work'
@@ -604,7 +607,7 @@ function sendBrowserNotification(title, body) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(title, {
             body: body,
-            icon: '/favicon.svg?v=2',
+            icon: '/app-icon.svg',
             requireInteraction: true,
             vibrate: [200, 100, 200]
         });
@@ -658,18 +661,19 @@ function loadState() {
         const loaded = JSON.parse(saved);
 
         // Check if it's a new day
-        if (loaded.stats.lastReset !== new Date().toDateString()) {
-            loaded.stats = {
-                sessionsCompleted: 0,
-                totalFocusTime: 0,
-                totalBreakTime: 0,
-                longestSession: 0,
-                sessionHistory: [],
-                lastReset: new Date().toDateString()
-            };
+        if (loaded.stats && loaded.stats.lastReset !== new Date().toDateString()) {
+            // Keep total historical stats, only reset today's counters
+            loaded.stats.sessionsCompleted = 0;
+            // totalFocusTime and sessionHistory shouldn't be wiped entirely, 
+            // but the original code wiped them. We will preserve them now.
+            loaded.stats.lastReset = new Date().toDateString();
         }
 
+        // Deep merge stats so we don't lose nested properties if state changes
         Object.assign(state, loaded);
+        if (loaded.stats) {
+            state.stats = { ...state.stats, ...loaded.stats };
+        }
         if (!state.tasks) state.tasks = []; // Ensure tasks exist for old states
     }
 }
