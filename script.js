@@ -592,6 +592,9 @@ function applyFocusMode() {
 
 function setTheme(themeName) {
     document.body.dataset.theme = themeName;
+    if (pipWindow) {
+        pipWindow.document.body.dataset.theme = themeName;
+    }
     localStorage.setItem('theme', themeName);
     
     if (themeSelect) {
@@ -635,8 +638,8 @@ async function togglePiP() {
 
     try {
         const popup = await window.documentPictureInPicture.requestWindow({
-            width: 340,
-            height: 220
+            width: 320,
+            height: 180
         });
 
         popup.addEventListener('pagehide', () => {
@@ -644,67 +647,80 @@ async function togglePiP() {
             updateTimerDisplay(); // Ensures sync if paused from pip just before close
         });
 
-        // Inject styles
+        // Inject main styles to inherit theme perfectly
+        const link = popup.document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/styles.css';
+        popup.document.head.appendChild(link);
+
+        popup.document.body.dataset.theme = document.body.dataset.theme || 'dracula';
+        
+        // Add custom layout overrides for PiP window shape
         const style = popup.document.createElement('style');
         style.textContent = `
-            body {
-                margin: 0;
+            body { 
+                background-color: var(--bg-color); 
+                padding: 0; margin: 0;
+                overflow: hidden;
+            }
+            .pip-container {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 height: 100vh;
-                background-color: #282a36;
-                color: #f8f8f2;
-                font-family: 'JetBrains Mono', monospace;
+                width: 100vw;
+                border-radius: 24px;
+                background-color: var(--bg-color);
             }
             .time {
+                font-family: 'JetBrains Mono', monospace;
                 font-size: 4rem;
-                font-weight: bold;
+                font-weight: 700;
+                color: var(--text-color);
+                line-height: 1;
                 margin-bottom: 5px;
+                text-shadow: 0 0 20px var(--primary-glow);
             }
             .mode {
-                font-size: 1rem;
-                color: #bd93f9;
-                margin-bottom: 25px;
+                font-family: 'Inter', sans-serif;
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--primary-color);
                 text-transform: uppercase;
                 letter-spacing: 2px;
+                margin-bottom: 20px;
             }
             .controls {
                 display: flex;
                 gap: 15px;
-            }
-            button {
-                background: #44475a;
-                color: white;
-                border: none;
-                padding: 12px 20px;
-                border-radius: 8px;
-                cursor: pointer;
-                font-weight: bold;
-                display: flex;
                 align-items: center;
-                justify-content: center;
-                transition: background 0.2s;
             }
-            button:hover { background: #6272a4; }
-            button.primary { background: #50fa7b; color: #282a36; }
-            button.primary:hover { background: #5af582; }
-            svg { width: 20px; height: 20px; }
+            .btn-control {
+                padding: 12px;
+                border-radius: 50%;
+            }
+            .btn-primary {
+                padding: 16px;
+            }
         `;
         popup.document.head.appendChild(style);
 
         const container = popup.document.createElement('div');
+        container.className = 'pip-container';
         container.innerHTML = `
             <div class="time" id="pipTime">00:00</div>
-            <div class="mode" id="pipMode">Focus</div>
+            <div class="mode" id="pipMode">Focus Time</div>
             <div class="controls">
-                <button id="pipPlayPause" class="primary" title="Play/Pause">
-                    <svg id="pipIconPlay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    <svg id="pipIconPause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                <button class="btn-control btn-reset" id="pipReset" title="Reset">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                 </button>
-                <button id="pipClose" title="Back to normal view">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+                <button class="btn-control btn-primary" id="pipPlayPause" title="Play/Pause">
+                    <svg id="pipIconPlay" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <svg id="pipIconPause" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <button class="btn-control btn-skip" id="pipSkip" title="Skip">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
                 </button>
             </div>
         `;
@@ -716,8 +732,14 @@ async function togglePiP() {
             updateTimerDisplay();
         });
 
-        popup.document.getElementById('pipClose').addEventListener('click', () => {
-            popup.close();
+        popup.document.getElementById('pipReset').addEventListener('click', () => {
+            resetTimer();
+            updateTimerDisplay();
+        });
+
+        popup.document.getElementById('pipSkip').addEventListener('click', () => {
+            skipSession();
+            updateTimerDisplay();
         });
 
         // Set pipWindow only after it's ready
