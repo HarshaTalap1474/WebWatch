@@ -514,6 +514,7 @@ body {
     position: absolute;
     inset: 0;
     transform: rotate(-90deg);
+    overflow: visible;
 }
 
 .progress-ring-bg {

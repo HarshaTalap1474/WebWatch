@@ -824,16 +824,28 @@ init();
 // LIFECYCLE HOOKS
 // ===================
 
+// Handle internal navigation to prevent beforeunload prompt
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    // If it's a link to the same origin (e.g. todo.html), set a flag
+    if (link && link.href && link.hostname === window.location.hostname) {
+        window.isInternalNavigation = true;
+    }
+});
+
 // Handle tab closing or reloading
 window.addEventListener('beforeunload', (e) => {
+    // Always save the exact current stopwatch time and stats before closing
+    saveState();
+
+    // Do not show the "Leave Site" prompt if we are just navigating to our own pages
+    if (window.isInternalNavigation) return;
+
     // If the timer is actively running, show the confirmation dialog
     if (state.isRunning) {
         e.preventDefault();
         e.returnValue = ''; // Required for Chrome to show the prompt
     }
-    
-    // Always save the exact current stopwatch time and stats before closing
-    saveState();
 });
 
 // Use visibilitychange as a fallback for mobile devices
