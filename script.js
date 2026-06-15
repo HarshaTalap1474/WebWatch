@@ -340,6 +340,14 @@ function updateTimerDisplay() {
     const circumference = 565.48;
     const strokeDashoffset = circumference * (1 - progress);
     progressRing.style.strokeDashoffset = strokeDashoffset;
+
+    // Update PiP progress ring if open
+    if (pipWindow) {
+        const pipProgressRing = pipWindow.document.getElementById('pipProgressRing');
+        if (pipProgressRing) {
+            pipProgressRing.style.strokeDashoffset = strokeDashoffset;
+        }
+    }
 }
 
 function completeSession() {
@@ -639,7 +647,7 @@ async function togglePiP() {
     try {
         const popup = await window.documentPictureInPicture.requestWindow({
             width: 320,
-            height: 180
+            height: 380
         });
 
         popup.addEventListener('pagehide', () => {
@@ -647,80 +655,76 @@ async function togglePiP() {
             updateTimerDisplay(); // Ensures sync if paused from pip just before close
         });
 
-        // Inject main styles to inherit theme perfectly
-        const link = popup.document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = '/styles.css';
-        popup.document.head.appendChild(link);
+        // Copy all stylesheets from the main document so themes load flawlessly even if Vite hashes the file
+        [...document.styleSheets].forEach(styleSheet => {
+            try {
+                if (styleSheet.href) {
+                    const link = popup.document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = styleSheet.href;
+                    popup.document.head.appendChild(link);
+                } else if (styleSheet.ownerNode) {
+                    const style = popup.document.createElement('style');
+                    style.textContent = styleSheet.ownerNode.textContent;
+                    popup.document.head.appendChild(style);
+                }
+            } catch (e) {
+                console.warn('Could not copy stylesheet', e);
+            }
+        });
 
         popup.document.body.dataset.theme = document.body.dataset.theme || 'dracula';
         
-        // Add custom layout overrides for PiP window shape
+        // Add minimal overrides to fit the main clock UI inside the PiP popup
         const style = popup.document.createElement('style');
         style.textContent = `
             body { 
                 background-color: var(--bg-base); 
                 padding: 0; margin: 0;
                 overflow: hidden;
-            }
-            .pip-container {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                height: 100vh;
-                width: 100vw;
-                border-radius: 24px;
-                background-color: var(--bg-base);
             }
-            .time {
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 4rem;
-                font-weight: 700;
-                color: var(--text-primary);
-                line-height: 1;
-                margin-bottom: 5px;
-                text-shadow: 0 0 20px var(--primary-glow);
-            }
-            .mode {
-                font-family: 'Inter', sans-serif;
-                font-size: 0.9rem;
-                font-weight: 600;
-                color: var(--primary-color);
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                margin-bottom: 20px;
-            }
-            .controls {
+            .pip-wrapper {
+                transform: scale(0.7);
                 display: flex;
-                gap: 15px;
+                flex-direction: column;
                 align-items: center;
+                margin-top: -30px;
             }
-            .btn-control {
-                padding: 12px;
-                border-radius: 50%;
-            }
-            .btn-primary {
-                padding: 16px;
+            .timer-controls {
+                margin-top: 20px;
             }
         `;
         popup.document.head.appendChild(style);
 
         const container = popup.document.createElement('div');
-        container.className = 'pip-container';
+        container.className = 'pip-wrapper';
         container.innerHTML = `
-            <div class="time" id="pipTime">00:00</div>
-            <div class="mode" id="pipMode">Focus Time</div>
-            <div class="controls">
+            <div class="timer-container" style="box-shadow: none;">
+                <svg class="progress-ring" width="360" height="360" style="position: absolute; top: -10px; left: -10px;">
+                    <circle class="progress-ring__circle progress-ring__background" cx="180" cy="180" r="175" />
+                    <circle id="pipProgressRing" class="progress-ring__circle progress-ring__progress" cx="180" cy="180" r="175" />
+                </svg>
+                <div class="timer-display">
+                    <div class="timer-circle">
+                        <span class="time-main" id="pipTime">00:00</span>
+                        <span class="time-label" id="pipMode">FOCUS TIME</span>
+                    </div>
+                </div>
+            </div>
+            <div class="timer-controls">
                 <button class="btn-control btn-reset" id="pipReset" title="Reset">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
                 </button>
                 <button class="btn-control btn-primary" id="pipPlayPause" title="Play/Pause">
-                    <svg id="pipIconPlay" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    <svg id="pipIconPause" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                    <svg id="pipIconPlay" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <svg id="pipIconPause" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                 </button>
                 <button class="btn-control btn-skip" id="pipSkip" title="Skip">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
                 </button>
             </div>
         `;
