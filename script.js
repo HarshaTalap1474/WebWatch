@@ -617,23 +617,8 @@ function sendBrowserNotification(title, body) {
 function playNotificationSound() {
     if (!state.soundEnabled) return;
 
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    // Play a pleasant 3-second notification sound
-    oscillator.frequency.value = 800;
-    oscillator.type = 'sine';
-
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    // Slow fade out over 3 seconds
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 3.0);
-
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 3.0);
+    const audio = new Audio('/alaram.mp3');
+    audio.play().catch(e => console.error('Audio playback failed:', e));
 }
 
 function handleKeyboard(e) {
