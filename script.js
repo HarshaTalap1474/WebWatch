@@ -683,25 +683,29 @@ async function togglePiP() {
         // Add minimal overrides to fit the main clock UI inside the PiP popup
         const style = popup.document.createElement('style');
         style.textContent = `
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
             body { 
                 background-color: var(--bg-base); 
-                padding: 0; margin: 0;
-                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .pip-wrapper {
+                transform: scale(calc(min(100vw / 340, 100vh / 400)));
+                transform-origin: center;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
             }
-            .pip-wrapper {
-                transform: scale(0.85);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-top: -10px;
-            }
             .timer-buttons {
-                margin-top: 20px;
-                transform: scale(0.9);
+                margin-top: 30px;
             }
         `;
         popup.document.head.appendChild(style);
