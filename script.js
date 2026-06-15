@@ -256,7 +256,7 @@ function startTimer() {
 function pauseTimer() {
     state.isRunning = false;
     state.isPaused = true;
-    state.sessionPausedTime += Math.floor((Date.now() - state.sessionStartTime) / 1000);
+    state.sessionPausedTime = Math.floor((Date.now() - state.sessionStartTime) / 1000);
 
     pauseBtn.style.display = 'none';
     startBtn.style.display = 'flex';
@@ -283,7 +283,7 @@ function skipSession() {
     state.isPaused = false;
     state.sessionPausedTime = 0;
     state.timeLeft = 0;
-    completeSession();
+    completeSession(true);
     showToast('Session skipped');
 }
 
@@ -331,32 +331,34 @@ function updateTimerDisplay() {
     progressRing.style.strokeDashoffset = strokeDashoffset;
 }
 
-function completeSession() {
+function completeSession(isSkipped = false) {
     const sessionTime = state.currentMode === 'work'
         ? state.focusDuration
         : state.currentMode === 'break'
         ? state.breakDuration
         : state.longBreakDuration;
 
-    if (state.currentMode === 'work') {
-        state.stats.totalFocusTime += sessionTime;
-        state.stats.longestSession = Math.max(state.stats.longestSession, sessionTime);
-        playNotificationSound();
-        showToast('🎉 Focus session completed! Time for a break.');
-        sendBrowserNotification('Focus session completed!', 'Time for a break. Great job!');
-    } else {
-        state.stats.totalBreakTime += sessionTime;
-        playNotificationSound();
-        showToast('☕ Break time over! Ready to focus?');
-        sendBrowserNotification('Break time over!', 'Ready to get back into focus?');
-    }
+    if (!isSkipped) {
+        if (state.currentMode === 'work') {
+            state.stats.totalFocusTime += sessionTime;
+            state.stats.longestSession = Math.max(state.stats.longestSession, sessionTime);
+            playNotificationSound();
+            showToast('🎉 Focus session completed! Time for a break.');
+            sendBrowserNotification('Focus session completed!', 'Time for a break. Great job!');
+        } else {
+            state.stats.totalBreakTime += sessionTime;
+            playNotificationSound();
+            showToast('☕ Break time over! Ready to focus?');
+            sendBrowserNotification('Break time over!', 'Ready to get back into focus?');
+        }
 
-    state.stats.sessionsCompleted++;
-    state.stats.sessionHistory.push({
-        type: state.currentMode,
-        duration: sessionTime,
-        date: new Date().toISOString()
-    });
+        state.stats.sessionsCompleted++;
+        state.stats.sessionHistory.push({
+            type: state.currentMode,
+            duration: sessionTime,
+            date: new Date().toISOString()
+        });
+    }
 
     // Auto-cycle to next session
     if (state.autoStartBreak) {
@@ -768,11 +770,47 @@ function loadState() {
         }
 
         // Deep merge stats so we don't lose nested properties if state changes
+        const oldStats = state.stats;
         Object.assign(state, loaded);
         if (loaded.stats) {
-            state.stats = { ...state.stats, ...loaded.stats };
+            state.stats = { ...oldStats, ...loaded.stats };
         }
         if (!state.tasks) state.tasks = []; // Ensure tasks exist for old states
+
+        // If the timer was running when they closed the tab, calculate elapsed time
+        if (state.isRunning) {
+            state.isRunning = false;
+            state.isPaused = true;
+            if (state.sessionStartTime) {
+                const elapsed = Math.floor((Date.now() - state.sessionStartTime) / 1000);
+                state.sessionPausedTime = elapsed;
+                
+                const initialDuration = state.currentMode === 'work'
+                    ? state.focusDuration * 60
+                    : state.currentMode === 'break'
+                    ? state.breakDuration * 60
+                    : state.longBreakDuration * 60;
+                    
+                state.timeLeft = Math.max(0, initialDuration - elapsed);
+                if (state.timeLeft === 0) {
+                    state.sessionPausedTime = 0;
+                    state.isPaused = false;
+                    setTimeout(() => completeSession(false), 1000);
+                }
+            }
+        }
+        
+        // Sync UI buttons
+        if (state.isPaused) {
+            startBtn.style.display = 'flex';
+            pauseBtn.style.display = 'none';
+        } else if (state.isRunning) {
+            startBtn.style.display = 'none';
+            pauseBtn.style.display = 'flex';
+        } else {
+            startBtn.style.display = 'flex';
+            pauseBtn.style.display = 'none';
+        }
     }
 }
 
