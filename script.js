@@ -1,4 +1,5 @@
 // Application State
+let pipWindow = null;
 const state = {
     isRunning: false,
     isPaused: false,
@@ -43,6 +44,7 @@ const pauseBtn = document.getElementById('pauseBtn');
 const resetBtn = document.getElementById('resetBtn');
 const skipBtn = document.getElementById('skipBtn');
 const themeSelect = document.getElementById('themeSelect');
+const pipBtn = document.getElementById('pipBtn');
 const settingsBtn = document.getElementById('settingsBtn');
 const statsBtn = document.getElementById('statsBtn');
 const statsPanel = document.getElementById('statsPanel');
@@ -101,6 +103,7 @@ function init() {
     pauseBtn.addEventListener('click', pauseTimer);
     resetBtn.addEventListener('click', resetTimer);
     skipBtn.addEventListener('click', skipSession);
+    if (pipBtn) pipBtn.addEventListener('click', togglePiP);
     themeSelect.addEventListener('change', (e) => setTheme(e.target.value));
     settingsBtn.addEventListener('click', () => openPanel('settings'));
     statsBtn.addEventListener('click', () => openPanel('stats'));
@@ -300,6 +303,30 @@ function updateTimerDisplay() {
         document.title = `${minStr}:${secStr} - ${modeName}`;
     } else {
         document.title = 'FocusFlow - Study Clock & Focus Timer';
+    }
+
+    // Update PiP window if open
+    if (pipWindow) {
+        const modeLabel = state.currentMode === 'work' ? 'Focus Time' :
+                          state.currentMode === 'break' ? 'Short Break' : 'Long Break';
+        
+        const pipTime = pipWindow.document.getElementById('pipTime');
+        const pipMode = pipWindow.document.getElementById('pipMode');
+        const pipIconPlay = pipWindow.document.getElementById('pipIconPlay');
+        const pipIconPause = pipWindow.document.getElementById('pipIconPause');
+        
+        if (pipTime) pipTime.textContent = `${minStr}:${secStr}`;
+        if (pipMode) pipMode.textContent = modeLabel;
+        
+        if (pipIconPlay && pipIconPause) {
+            if (state.isRunning) {
+                pipIconPlay.style.display = 'none';
+                pipIconPause.style.display = 'block';
+            } else {
+                pipIconPlay.style.display = 'block';
+                pipIconPause.style.display = 'none';
+            }
+        }
     }
 
     // Update progress ring
@@ -594,6 +621,114 @@ function closePanel(panel) {
 // ===================
 // UTILITY FUNCTIONS
 // ===================
+
+async function togglePiP() {
+    if (!('documentPictureInPicture' in window)) {
+        showToast('Picture-in-Picture API not supported on this browser.');
+        return;
+    }
+
+    if (pipWindow) {
+        pipWindow.close();
+        return;
+    }
+
+    try {
+        const popup = await window.documentPictureInPicture.requestWindow({
+            width: 340,
+            height: 220
+        });
+
+        popup.addEventListener('pagehide', () => {
+            pipWindow = null;
+            updateTimerDisplay(); // Ensures sync if paused from pip just before close
+        });
+
+        // Inject styles
+        const style = popup.document.createElement('style');
+        style.textContent = `
+            body {
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                background-color: #282a36;
+                color: #f8f8f2;
+                font-family: 'JetBrains Mono', monospace;
+            }
+            .time {
+                font-size: 4rem;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            .mode {
+                font-size: 1rem;
+                color: #bd93f9;
+                margin-bottom: 25px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+            .controls {
+                display: flex;
+                gap: 15px;
+            }
+            button {
+                background: #44475a;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s;
+            }
+            button:hover { background: #6272a4; }
+            button.primary { background: #50fa7b; color: #282a36; }
+            button.primary:hover { background: #5af582; }
+            svg { width: 20px; height: 20px; }
+        `;
+        popup.document.head.appendChild(style);
+
+        const container = popup.document.createElement('div');
+        container.innerHTML = \`
+            <div class="time" id="pipTime">00:00</div>
+            <div class="mode" id="pipMode">Focus</div>
+            <div class="controls">
+                <button id="pipPlayPause" class="primary" title="Play/Pause">
+                    <svg id="pipIconPlay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <svg id="pipIconPause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <button id="pipClose" title="Back to normal view">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+                </button>
+            </div>
+        \`;
+        popup.document.body.appendChild(container);
+
+        popup.document.getElementById('pipPlayPause').addEventListener('click', () => {
+            if (state.isRunning) pauseTimer();
+            else startTimer();
+            updateTimerDisplay();
+        });
+
+        popup.document.getElementById('pipClose').addEventListener('click', () => {
+            popup.close();
+        });
+
+        // Set pipWindow only after it's ready
+        pipWindow = popup;
+        updateTimerDisplay();
+
+    } catch (e) {
+        console.error(e);
+        showToast('Failed to open PiP window');
+    }
+}
 
 function showToast(message) {
     toast.textContent = message;
