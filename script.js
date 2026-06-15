@@ -659,7 +659,7 @@ async function togglePiP() {
         const style = popup.document.createElement('style');
         style.textContent = `
             body { 
-                background-color: var(--bg-color); 
+                background-color: var(--bg-base); 
                 padding: 0; margin: 0;
                 overflow: hidden;
             }
@@ -671,13 +671,13 @@ async function togglePiP() {
                 height: 100vh;
                 width: 100vw;
                 border-radius: 24px;
-                background-color: var(--bg-color);
+                background-color: var(--bg-base);
             }
             .time {
                 font-family: 'JetBrains Mono', monospace;
                 font-size: 4rem;
                 font-weight: 700;
-                color: var(--text-color);
+                color: var(--text-primary);
                 line-height: 1;
                 margin-bottom: 5px;
                 text-shadow: 0 0 20px var(--primary-glow);
