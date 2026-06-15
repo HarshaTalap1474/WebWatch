@@ -271,7 +271,7 @@ pm2 flush
 4. **Environment matters**: Use Focus Mode in distracting environments
 5. **Track patterns**: Notice your most productive times of day
 
-## 🚀 **Happy Studying!**
+## 🚀 **Happy Studying!** 
 
 Stay focused, be productive, and track your progress! 📚✨
 
