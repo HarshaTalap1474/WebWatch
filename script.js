@@ -627,8 +627,8 @@ async function togglePiP() {
 
     try {
         const popup = await window.documentPictureInPicture.requestWindow({
-            width: 320,
-            height: 380
+            width: 300,
+            height: 120
         });
 
         popup.addEventListener('pagehide', () => {
