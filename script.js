@@ -45,6 +45,7 @@ const resetBtn = document.getElementById('resetBtn');
 const skipBtn = document.getElementById('skipBtn');
 const themeSelect = document.getElementById('themeSelect');
 const pipBtn = document.getElementById('pipBtn');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
 const settingsBtn = document.getElementById('settingsBtn');
 const statsBtn = document.getElementById('statsBtn');
 const statsPanel = document.getElementById('statsPanel');
@@ -104,6 +105,7 @@ function init() {
     resetBtn.addEventListener('click', resetTimer);
     skipBtn.addEventListener('click', skipSession);
     if (pipBtn) pipBtn.addEventListener('click', togglePiP);
+    if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullscreen);
     themeSelect.addEventListener('change', (e) => setTheme(e.target.value));
     settingsBtn.addEventListener('click', () => openPanel('settings'));
     statsBtn.addEventListener('click', () => openPanel('stats'));
@@ -703,11 +705,44 @@ async function togglePiP() {
         pipWindow = popup;
         updateTimerDisplay();
 
-    } catch (e) {
-        console.error(e);
-        showToast('Failed to open PiP window');
+    } catch (error) {
+        console.error('Failed to enter PiP mode:', error);
+        showToast('PiP mode failed or not supported');
     }
 }
+
+// ===================
+// FULLSCREEN FUNCTIONS
+// ===================
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            showToast('Fullscreen not supported');
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
+
+// Update fullscreen icon based on state
+document.addEventListener('fullscreenchange', () => {
+    if (!fullscreenBtn) return;
+    if (document.fullscreenElement) {
+        // Minimize icon
+        fullscreenBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>`;
+    } else {
+        // Maximize icon
+        fullscreenBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>`;
+    }
+});
+
+// ===================
+// DATA PERSISTENCE
+// ===================
 
 function showToast(message) {
     toast.textContent = message;
