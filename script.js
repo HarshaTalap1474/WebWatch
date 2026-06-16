@@ -24,6 +24,9 @@ const state = {
         totalFocusTime: 0,
         totalBreakTime: 0,
         longestSession: 0,
+        currentStreak: 0,
+        highestStreak: 0,
+        lastActiveDate: null,
         sessionHistory: [],
         lastReset: new Date().toDateString()
     },
@@ -58,6 +61,9 @@ const dailyGoalEl = document.getElementById('dailyGoal');
 const focusModeToggle = document.getElementById('focusModeToggle');
 const focusModeIndicator = document.getElementById('focusModeIndicator');
 const panelOverlay = document.getElementById('panelOverlay');
+const streakCount = document.getElementById('streakCount');
+const currentStreakStat = document.getElementById('currentStreakStat');
+const highestStreakStat = document.getElementById('highestStreakStat');
 
 // Clock hands
 const hourHand = document.getElementById('hourHand');
@@ -354,6 +360,28 @@ function completeSession(isSkipped = false) {
             sendBrowserNotification('Break time over!', 'Ready to get back into focus?');
         }
 
+        // Streak Logic
+        if (state.currentMode === 'work') {
+            const todayStr = new Date().toDateString();
+            if (state.stats.lastActiveDate !== todayStr) {
+                if (state.stats.lastActiveDate) {
+                    const lastActive = new Date(state.stats.lastActiveDate);
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    
+                    if (lastActive.toDateString() === yesterday.toDateString()) {
+                        state.stats.currentStreak++;
+                    } else {
+                        state.stats.currentStreak = 1; // Broken streak, restart at 1
+                    }
+                } else {
+                    state.stats.currentStreak = 1; // First ever session
+                }
+                state.stats.lastActiveDate = todayStr;
+                state.stats.highestStreak = Math.max(state.stats.highestStreak || 0, state.stats.currentStreak);
+            }
+        }
+
         state.stats.sessionsCompleted++;
         state.stats.sessionHistory.push({
             type: state.currentMode,
@@ -429,12 +457,33 @@ function changeMode(e) {
 // STATISTICS FUNCTIONS
 // ===================
 
+function checkStreakBroken() {
+    if (!state.stats.lastActiveDate) return;
+    const lastActive = new Date(state.stats.lastActiveDate);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    lastActive.setHours(0,0,0,0);
+    const diffTime = today - lastActive;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+    
+    if (diffDays > 1) {
+        state.stats.currentStreak = 0;
+    }
+}
+
 function updateStats() {
+    checkStreakBroken();
+
     // Today's focus time
     const todayFocusSeconds = state.stats.totalFocusTime * 60;
     const focusHours = Math.floor(todayFocusSeconds / 3600);
     const focusMinutes = Math.floor((todayFocusSeconds % 3600) / 60);
     todayFocus.textContent = `${focusHours}h ${focusMinutes}m`;
+    
+    // Streak count
+    if (streakCount) {
+        streakCount.textContent = state.stats.currentStreak || 0;
+    }
 
     // Session count
     sessionCount.textContent = state.stats.sessionsCompleted;
@@ -462,6 +511,8 @@ function updateStatsPanelContent() {
     document.getElementById('totalBreakTime').textContent = `${breakHours}h ${breakMinutes}m`;
 
     document.getElementById('longestSession').textContent = `${state.stats.longestSession}m`;
+    if (currentStreakStat) currentStreakStat.textContent = `${state.stats.currentStreak || 0} Days`;
+    if (highestStreakStat) highestStreakStat.textContent = `${state.stats.highestStreak || 0} Days`;
 
     // Goal progress
     const goalProgress = Math.min(100, (state.stats.totalFocusTime / state.dailyGoalMinutes) * 100);

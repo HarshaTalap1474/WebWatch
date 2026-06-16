@@ -41,6 +41,10 @@
                 <span class="header-tag">Focus Timer</span>
             </div>
             <div class="header-controls">
+                <div class="streak-badge" id="streakBadge" title="Current Streak" style="display: flex; align-items: center; justify-content: center; gap: 4px; padding: 0 16px; border-radius: var(--radius-full); background: var(--glass-panel-bg); color: var(--primary-color); font-weight: 700; font-size: 14px; box-shadow: var(--shadow-sm); border: 1px solid var(--glass-border); height: 40px; backdrop-filter: blur(10px);">
+                    <span style="font-size: 16px;">🔥</span>
+                    <span id="streakCount">0</span>
+                </div>
                 <a href="todo.html" class="icon-btn" title="Todo List" style="width: auto; padding: 0 20px; border-radius: var(--radius-full); gap: 8px; background: var(--primary-color); color: var(--text-inverse); box-shadow: 0 4px 12px var(--primary-glow);">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                     <span style="font-size: 14px; font-weight: 600;">TODO</span>
@@ -236,6 +240,14 @@
                 <div class="stats-card">
                     <span class="stats-label">Longest Session</span>
                     <span class="stats-value" id="longestSession">0m</span>
+                </div>
+                <div class="stats-card">
+                    <span class="stats-label">Current Streak</span>
+                    <span class="stats-value" id="currentStreakStat">0 Days</span>
+                </div>
+                <div class="stats-card">
+                    <span class="stats-label">Highest Streak</span>
+                    <span class="stats-value" id="highestStreakStat">0 Days</span>
                 </div>
             </div>
             <div class="goal-progress">
