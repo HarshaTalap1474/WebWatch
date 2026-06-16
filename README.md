@@ -277,4 +277,4 @@ Stay focused, be productive, and track your progress! 📚✨
 
 ---
 
-**Enjoy FocusFlow and make your study sessions count!**🎓
+**Enjoy FocusFlow and make your study sessions count!** 🎓
